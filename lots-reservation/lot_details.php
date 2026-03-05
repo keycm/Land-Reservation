@@ -161,9 +161,16 @@ while($img = $gallery_res->fetch_assoc()){
             <button class="lb-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
 
-        <img id="lightbox-img" src="">
-        <div style="color: white; margin-top: 15px; font-weight: 600; font-size: 14px;">
-            <span id="lb-counter">1</span> / <?= count($js_images) ?>
+        <div style="overflow: hidden; display: flex; justify-content: center; align-items: center; width: 100%; height: 85vh;">
+            <img id="lightbox-img" src="" style="transition: transform 0.2s ease;">
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 15px; align-items: center;">
+            <button class="lb-btn" onclick="zoomImage(-0.2)" style="width: 40px; height: 40px; font-size: 18px;" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <div style="color: white; font-weight: 600; font-size: 14px;">
+                <span id="lb-counter">1</span> / <?= count($js_images) ?>
+            </div>
+            <button class="lb-btn" onclick="zoomImage(0.2)" style="width: 40px; height: 40px; font-size: 18px;" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
         </div>
     </div>
 
@@ -260,7 +267,7 @@ while($img = $gallery_res->fetch_assoc()){
 
                                 <div class="form-group">
                                     <label>Full Name</label>
-                                    <input type="text" class="form-control" value="<?= $_SESSION['fullname'] ?>" readonly style="background:#EDF2F7;">
+                                    <input type="text" name="fullname" class="form-control" value="<?= $_SESSION['fullname'] ?>" required>
                                 </div>
 
                                 <div class="form-group">
@@ -337,11 +344,25 @@ while($img = $gallery_res->fetch_assoc()){
         // --- LIGHTBOX LOGIC ---
         const allImages = <?php echo json_encode($js_images); ?>;
         let currentIdx = 0;
+        let currentZoom = 1;
+
+        function zoomImage(step) {
+            currentZoom += step;
+            if (currentZoom < 0.5) currentZoom = 0.5; // Min zoom limit
+            if (currentZoom > 5) currentZoom = 5;     // Max zoom limit
+            document.getElementById('lightbox-img').style.transform = `scale(${currentZoom})`;
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            document.getElementById('lightbox-img').style.transform = `scale(${currentZoom})`;
+        }
 
         function openLightbox(src) {
             const index = allImages.indexOf(src);
             if(index !== -1) {
                 currentIdx = index;
+                resetZoom();
                 updateLightboxImage();
                 document.getElementById('lightbox').style.display = 'flex';
             }
@@ -349,12 +370,14 @@ while($img = $gallery_res->fetch_assoc()){
 
         function closeLightbox() {
             document.getElementById('lightbox').style.display = 'none';
+            resetZoom();
         }
 
         function changeSlide(step) {
             currentIdx += step;
             if (currentIdx >= allImages.length) currentIdx = 0;
             if (currentIdx < 0) currentIdx = allImages.length - 1;
+            resetZoom();
             updateLightboxImage();
         }
 
