@@ -24,10 +24,10 @@ if(!empty($_GET['status']) && $_GET['status'] != 'ALL'){
 
 $where_sql = implode(" AND ", $where_clauses);
 
-$query = "SELECT l.*, p.name as phase_name 
-          FROM lots l 
-          LEFT JOIN phases p ON l.phase_id = p.id 
-          WHERE $where_sql 
+$query = "SELECT l.*, p.name as phase_name
+          FROM lots l
+          LEFT JOIN phases p ON l.phase_id = p.id
+          WHERE $where_sql
           ORDER BY l.status = 'AVAILABLE' DESC, l.id DESC";
 
 $stmt = $conn->prepare($query);
@@ -43,10 +43,10 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JEJ Surveying Services | Find Your Dream Property</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="assets/modern.css">
 </head>
 <body>
@@ -58,11 +58,15 @@ $result = $stmt->get_result();
                 <span class="nav-brand">JEJ Surveying Services</span>
             </a>
         </div>
-        
+
         <div class="nav-links desktop-only">
             <a href="index.php" class="active">Properties</a>
-            <?php if(isset($_SESSION['user_id']) && in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])): ?>
-                <a href="admin.php">Admin Panel</a>
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <?php if(in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])): ?>
+                    <a href="admin.php">Admin Panel</a>
+                <?php else: ?>
+                    <a href="my_reservations.php">My Reservations</a>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
@@ -90,13 +94,13 @@ $result = $stmt->get_result();
     <header class="hero">
         <h1>Find Your Green Sanctuary</h1>
         <p>Discover sustainable lots and build your future home in nature.</p>
-        
+
         <form class="search-box" method="GET" action="index.php">
             <div class="search-input-group">
                 <i class="fa-solid fa-location-dot"></i>
                 <input type="text" name="q" class="search-input" placeholder="Search location, phase, or block..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
             </div>
-            
+
             <span class="divider-vertical"></span>
 
             <div class="search-input-group" style="min-width: 180px;">
@@ -113,7 +117,7 @@ $result = $stmt->get_result();
     </header>
 
     <div class="container" id="results">
-        
+
         <?php if(!empty($_GET['q'])): ?>
             <h2 class="section-title">Search Results for "<?= htmlspecialchars($_GET['q']) ?>"</h2>
         <?php else: ?>
@@ -122,7 +126,7 @@ $result = $stmt->get_result();
 
         <div class="property-grid">
             <?php if($result->num_rows > 0): ?>
-                <?php while($row = $result->fetch_assoc()): 
+                <?php while($row = $result->fetch_assoc()):
                     $loc_display = !empty($row['location']) ? $row['location'] : ($row['phase_name'] ?? 'Unknown Location');
                 ?>
                 <a href="lot_details.php?id=<?= $row['id'] ?>" class="prop-card">
@@ -132,7 +136,7 @@ $result = $stmt->get_result();
                             <?= $row['status'] == 'AVAILABLE' ? 'For Sale' : $row['status'] ?>
                         </span>
                     </div>
-                    
+
                     <div class="prop-info">
                         <div class="prop-loc">
                             <i class="fa-solid fa-map-pin" style="color: var(--primary);"></i> <?= htmlspecialchars($loc_display) ?>
@@ -140,7 +144,7 @@ $result = $stmt->get_result();
                         <h3 class="prop-title">Block <?= $row['block_no'] ?>, Lot <?= $row['lot_no'] ?> <br>
                             <span style="font-weight: 500; font-size: 14px; color: #718096;"><?= $row['property_type'] ?></span>
                         </h3>
-                        
+
                         <div class="prop-stats">
                             <div class="prop-stat"><i class="fa-solid fa-ruler-combined"></i> <?= number_format($row['area']) ?> m²</div>
                             <div class="prop-stat"><i class="fa-solid fa-tag"></i> ₱<?= number_format($row['price_per_sqm']) ?>/sqm</div>
@@ -176,7 +180,7 @@ $result = $stmt->get_result();
             &copy; <?= date('Y') ?> All Rights Reserved.
         </div>
     </footer>
-    
+
     <?php if(!empty($_GET['q']) || !empty($_GET['status'])): ?>
     <script>
         document.addEventListener("DOMContentLoaded", function() {

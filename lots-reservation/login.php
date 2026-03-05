@@ -14,8 +14,12 @@ if(isset($_POST['login'])){
         $_SESSION['user_id'] = $row['id'];
         $_SESSION['fullname'] = $row['fullname'] ?? explode('@', $row['email'])[0];
         $_SESSION['role'] = $row['role'] ?? 'BUYER';
-        
-        header("Location: index.php"); 
+
+        if(in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])){
+            header("Location: admin.php");
+        } else {
+            header("Location: index.php");
+        }
         exit();
     } else {
         $error = "Invalid email or password.";
@@ -32,10 +36,10 @@ if(isset($_POST['login'])){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="login-body">
-    
+
     <div class="login-box">
         <div style="font-size: 40px; margin-bottom: 10px;">🌲</div>
-        
+
         <h2>EcoEstates</h2>
         <span class="version">System v2.0</span>
 
