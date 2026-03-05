@@ -176,7 +176,7 @@ while($img = $gallery_res->fetch_assoc()){
         </div>
         <div class="nav-links desktop-only">
             <a href="index.php">Properties</a>
-            <?php if(isset($_SESSION['user_id']) && $_SESSION['role']=='ADMIN'): ?><a href="admin.php">Admin Panel</a><?php endif; ?>
+            <?php if(isset($_SESSION['user_id']) && in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])): ?><a href="admin.php">Admin Panel</a><?php endif; ?>
         </div>
         <div class="user-menu">
             <span class="user-name"><?= htmlspecialchars($_SESSION['fullname']) ?></span>

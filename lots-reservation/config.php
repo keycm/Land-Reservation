@@ -24,7 +24,7 @@ function checkLogin(){
 // Helper: Check if Admin
 function checkAdmin(){
     checkLogin();
-    if($_SESSION['role'] !== 'ADMIN'){
+    if(!in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])){
         die("ACCESS DENIED");
     }
 }

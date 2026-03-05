@@ -3,7 +3,7 @@
 include 'config.php';
 
 // Security Check
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ADMIN'){
+if(!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])){
     die("Access Denied");
 }
 

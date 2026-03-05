@@ -61,7 +61,7 @@ $result = $stmt->get_result();
         
         <div class="nav-links desktop-only">
             <a href="index.php" class="active">Properties</a>
-            <?php if(isset($_SESSION['user_id']) && $_SESSION['role']=='ADMIN'): ?>
+            <?php if(isset($_SESSION['user_id']) && in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])): ?>
                 <a href="admin.php">Admin Panel</a>
             <?php endif; ?>
         </div>
