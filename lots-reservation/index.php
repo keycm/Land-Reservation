@@ -82,7 +82,7 @@ $result = $stmt->get_result();
                 </div>
             <?php else: ?>
                 <a href="login.php" style="font-weight: 700; color: var(--dark); margin-right: 20px;">Login</a>
-                <a href="login.php?action=register" class="search-btn" style="padding: 10px 25px; font-size: 13px; text-decoration: none; border-radius: 30px;">Get Started</a>
+                <a href="register.php" class="search-btn" style="padding: 10px 25px; font-size: 13px; text-decoration: none; border-radius: 30px;">Get Started</a>
             <?php endif; ?>
         </div>
     </nav>

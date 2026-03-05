@@ -39,6 +39,12 @@ if(isset($_POST['login'])){
         <h2>EcoEstates</h2>
         <span class="version">System v2.0</span>
 
+        <?php if(isset($_GET['success'])): ?>
+            <div style="background:#e8f5e9; color:#2e7d32; padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px;">
+                Registration successful! Please login.
+            </div>
+        <?php endif; ?>
+
         <?php if($error): ?>
             <div style="background:#ffebee; color:#c62828; padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px;">
                 <?= $error ?>
@@ -62,6 +68,7 @@ if(isset($_POST['login'])){
         </form>
 
         <div class="small-text">
+            Don't have an account? <a href="register.php">Register here</a><br><br>
             Go back to <a href="index.php">Website Homepage</a>
         </div>
     </div>
