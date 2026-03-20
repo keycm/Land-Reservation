@@ -1,28 +1,26 @@
 <?php
-// login.php
+// register.php
 include 'config.php';
 
 $error = "";
-if(isset($_POST['login'])){
-    $email = $_POST['email'];
+if(isset($_POST['register'])){
+    $fullname = $conn->real_escape_string($_POST['fullname']);
+    $phone = $conn->real_escape_string($_POST['phone']);
+    $email = $conn->real_escape_string($_POST['email']);
     $p = md5($_POST['password']);
 
-    $check = $conn->query("SELECT * FROM users WHERE email='$email' AND password='$p'");
+    $check = $conn->query("SELECT * FROM users WHERE email='$email'");
 
     if($check->num_rows > 0){
-        $row = $check->fetch_assoc();
-        $_SESSION['user_id'] = $row['id'];
-        $_SESSION['fullname'] = $row['fullname'] ?? explode('@', $row['email'])[0];
-        $_SESSION['role'] = $row['role'] ?? 'BUYER';
-
-        if(in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])){
-            header("Location: admin.php");
-        } else {
-            header("Location: index.php");
-        }
-        exit();
+        $error = "Email is already registered.";
     } else {
-        $error = "Invalid email or password.";
+        $insert = $conn->query("INSERT INTO users (fullname, phone, email, password, role) VALUES ('$fullname', '$phone', '$email', '$p', 'BUYER')");
+        if($insert){
+            header("Location: login.php?success=1");
+            exit();
+        } else {
+            $error = "Registration failed. Please try again.";
+        }
     }
 }
 ?>
@@ -31,7 +29,7 @@ if(isset($_POST['login'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In | EcoEstates</title>
+    <title>Register | EcoEstates</title>
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -43,12 +41,6 @@ if(isset($_POST['login'])){
         <h2>EcoEstates</h2>
         <span class="version">System v2.0</span>
 
-        <?php if(isset($_GET['success'])): ?>
-            <div style="background:#e8f5e9; color:#2e7d32; padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px;">
-                Registration successful! Please login.
-            </div>
-        <?php endif; ?>
-
         <?php if($error): ?>
             <div style="background:#ffebee; color:#c62828; padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px;">
                 <?= $error ?>
@@ -56,6 +48,16 @@ if(isset($_POST['login'])){
         <?php endif; ?>
 
         <form method="POST">
+            <div class="input-group">
+                <i class="fa-solid fa-users-gear"></i>
+                <input type="text" name="fullname" placeholder="Full Name" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-phone"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+
             <div class="input-group">
                 <i class="fa-solid fa-envelope"></i>
                 <input type="email" name="email" placeholder="Email Address" required>
@@ -66,13 +68,13 @@ if(isset($_POST['login'])){
                 <input type="password" name="password" placeholder="Password" required>
             </div>
 
-            <button type="submit" name="login" class="btn-login">
-                LOGIN NOW
+            <button type="submit" name="register" class="btn-login">
+                REGISTER NOW
             </button>
         </form>
 
         <div class="small-text">
-            Don't have an account? <a href="register.php">Register here</a><br><br>
+            Already have an account? <a href="login.php">Login here</a><br><br>
             Go back to <a href="index.php">Website Homepage</a>
         </div>
     </div>

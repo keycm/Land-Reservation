@@ -3,7 +3,7 @@
 include 'config.php';
 
 // Security Check
-if(!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ADMIN'){
+if(!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])){
     header("Location: login.php");
     exit();
 }
@@ -29,16 +29,16 @@ if(isset($_POST['save_lot'])){
     $overview = $_POST['property_overview'];
     $lat = !empty($_POST['latitude']) ? $_POST['latitude'] : NULL;
     $lng = !empty($_POST['longitude']) ? $_POST['longitude'] : NULL;
-    
+
     $block = $_POST['block_no'];
     $lot_no = $_POST['lot_no'];
     $area = $_POST['area'];
     $price_sqm = $_POST['price_sqm'];
     $total = $_POST['total_price'];
     $status = $_POST['status'];
-    
+
     // 1. Handle Main Image
-    $lot_image = $_POST['current_image'] ?? ''; 
+    $lot_image = $_POST['current_image'] ?? '';
     if(isset($_FILES['lot_image']) && $_FILES['lot_image']['error'] == 0){
         $target_dir = "uploads/";
         if(!is_dir($target_dir)) mkdir($target_dir);
@@ -67,7 +67,7 @@ if(isset($_POST['save_lot'])){
     if(isset($_FILES['gallery'])){
         $count = count($_FILES['gallery']['name']);
         if(!is_dir("uploads/")) mkdir("uploads/");
-        
+
         for($i=0; $i<$count; $i++){
             if($_FILES['gallery']['error'][$i] == 0){
                 $g_filename = time() . "_" . $i . "_" . basename($_FILES['gallery']['name'][$i]);
@@ -91,7 +91,7 @@ if(isset($_GET['delete_id'])){
 }
 
 if(isset($_GET['edit_id'])){
-    $view = 'inventory'; 
+    $view = 'inventory';
     $edit_mode = true;
     $id = $_GET['edit_id'];
     $edit_data = $conn->query("SELECT * FROM lots WHERE id='$id'")->fetch_assoc();
@@ -112,10 +112,10 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/modern.css">
-    
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.css" />
-    
+
     <style>
         body { background-color: #F7FAFC; display: flex; min-height: 100vh; overflow-x: hidden; }
         .sidebar { width: 260px; background: white; border-right: 1px solid #EDF2F7; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
@@ -150,7 +150,7 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
         .btn-edit { background: #EBF8FF; color: #3182CE; }
         .btn-del { background: #FFF5F5; color: #E53E3E; margin-left: 5px; }
         .btn-save { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        
+
         #map { height: 350px; width: 100%; border-radius: 12px; border: 1px solid #E2E8F0; z-index: 1; }
         .leaflet-control-geosearch form { background: white; padding: 2px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #E2E8F0; }
         .leaflet-control-geosearch input { height: 35px; border: none; outline: none; padding-left: 10px; font-size: 13px; }
@@ -163,10 +163,10 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
             <img src="assets/logo.png" style="height: 40px; width: auto; border-radius: 6px; margin-right: 10px;">
             <span style="font-size: 18px; font-weight: 800; color: var(--primary);">JEJ Admin</span>
         </div>
-        
+
         <div class="sidebar-menu">
             <small style="padding: 0 20px; color: #A0AEC0; font-weight: 700; font-size: 11px; display: block; margin-bottom: 10px;">MAIN MENU</small>
-            
+
             <a href="admin.php?view=dashboard" class="menu-link <?= $view=='dashboard'?'active':'' ?>">
                 <i class="fa-solid fa-chart-pie"></i> Dashboard
             </a>
@@ -176,12 +176,12 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
             <a href="admin.php?view=inventory" class="menu-link <?= $view=='inventory'?'active':'' ?>">
                 <i class="fa-solid fa-list-check"></i> Inventory
             </a>
-            
+
             <small style="padding: 0 20px; color: #A0AEC0; font-weight: 700; font-size: 11px; display: block; margin-top: 20px; margin-bottom: 10px;">MANAGEMENT</small>
             <a href="accounts.php" class="menu-link">
                 <i class="fa-solid fa-users-gear"></i> Accounts
             </a>
-            
+
             <small style="padding: 0 20px; color: #A0AEC0; font-weight: 700; font-size: 11px; display: block; margin-top: 20px; margin-bottom: 10px;">SYSTEM</small>
             <a href="index.php" class="menu-link" target="_blank">
                 <i class="fa-solid fa-globe"></i> View Website
@@ -190,7 +190,7 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
             </a>
         </div>
-        
+
         <div style="padding: 20px; border-top: 1px solid #EDF2F7;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div style="width: 35px; height: 35px; background: var(--dark); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
@@ -240,7 +240,7 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
                     <i class="fa-solid fa-map stat-icon"></i>
                 </div>
             </div>
-            
+
             <div class="table-container">
                 <div style="padding: 40px; text-align: center;">
                     <i class="fa-solid fa-file-signature" style="font-size: 40px; color: #CBD5E0; margin-bottom: 15px;"></i>
@@ -256,14 +256,14 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
                     <div style="margin-bottom: 20px; border-bottom: 1px solid #EDF2F7; padding-bottom: 15px;">
                         <span class="table-title"><?= $edit_mode ? 'Edit Property Details' : 'Add New Property' ?></span>
                     </div>
-                    
+
                     <form method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="lot_id" value="<?= $edit_mode ? $edit_data['id'] : '' ?>">
                         <input type="hidden" name="current_image" value="<?= $edit_mode ? $edit_data['lot_image'] : '' ?>">
-                        
+
                         <input type="hidden" name="latitude" id="lat" value="<?= $edit_mode ? $edit_data['latitude'] : '' ?>">
                         <input type="hidden" name="longitude" id="lng" value="<?= $edit_mode ? $edit_data['longitude'] : '' ?>">
-                        
+
                         <div class="form-grid">
                             <div class="input-group">
                                 <label>Location / Phase</label>
@@ -331,7 +331,7 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
 
                             <?php if($edit_mode): ?>
                                 <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-                                    <?php 
+                                    <?php
                                     $gal_res = $conn->query("SELECT * FROM lot_gallery WHERE lot_id='$id'");
                                     while($img = $gal_res->fetch_assoc()):
                                     ?>
@@ -373,9 +373,9 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $lots = $conn->query("SELECT * FROM lots ORDER BY id DESC");
-                            while($lot = $lots->fetch_assoc()): 
+                            while($lot = $lots->fetch_assoc()):
                             ?>
                             <tr>
                                 <td>
@@ -388,7 +388,7 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
                                 <td>B-<?= $lot['block_no'] ?> L-<?= $lot['lot_no'] ?></td>
                                 <td style="font-family: 'Open Sans', sans-serif; font-weight: 600;">₱<?= number_format($lot['total_price']) ?></td>
                                 <td>
-                                    <?php 
+                                    <?php
                                         $badges = [
                                             'AVAILABLE' => ['bg'=>'#C6F6D5', 'col'=>'#22543D'],
                                             'RESERVED'  => ['bg'=>'#FEEBC8', 'col'=>'#744210'],
@@ -422,13 +422,29 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
             document.addEventListener('DOMContentLoaded', function() {
                 var initialLat = <?= $edit_mode && !empty($edit_data['latitude']) ? $edit_data['latitude'] : '14.5995' ?>; // Default Manila
                 var initialLng = <?= $edit_mode && !empty($edit_data['longitude']) ? $edit_data['longitude'] : '120.9842' ?>;
-                
-                var map = L.map('map').setView([initialLat, initialLng], 13);
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap'
-                }).addTo(map);
+                });
+
+                var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: 'Tiles &copy; Esri'
+                });
+
+                var map = L.map('map', {
+                    center: [initialLat, initialLng],
+                    zoom: 13,
+                    layers: [satelliteLayer] // Default to satellite
+                });
+
+                var baseMaps = {
+                    "Satellite": satelliteLayer,
+                    "Streets": streetLayer
+                };
+
+                L.control.layers(baseMaps).addTo(map);
 
                 // Add Search Control
                 const provider = new GeoSearch.OpenStreetMapProvider();
@@ -451,7 +467,7 @@ $stats_avail   = $conn->query("SELECT COUNT(*) as count FROM lots WHERE status='
                 function updatePin(lat, lng) {
                     document.getElementById('lat').value = lat;
                     document.getElementById('lng').value = lng;
-                    
+
                     if (marker) {
                         marker.setLatLng([lat, lng]);
                     } else {

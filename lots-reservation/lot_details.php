@@ -41,7 +41,7 @@ while($img = $gallery_res->fetch_assoc()){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Details | JEJ Surveying Services</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -51,9 +51,9 @@ while($img = $gallery_res->fetch_assoc()){
         /* General Page Layout */
         .breadcrumb { margin-bottom: 25px; font-size: 14px; color: #718096; display: flex; align-items: center; gap: 10px; }
         .breadcrumb a { color: var(--primary); text-decoration: none; font-weight: 600; }
-        
+
         .details-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; align-items: start; }
-        
+
         /* --- IMAGE GALLERY STYLES --- */
         .main-img-box {
             position: relative; border-radius: 16px; overflow: hidden; height: 450px;
@@ -61,12 +61,12 @@ while($img = $gallery_res->fetch_assoc()){
         }
         .main-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .main-img-box:hover .main-img { transform: scale(1.02); }
-        
+
         .gallery-grid {
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px;
         }
         .thumb-box {
-            height: 70px; border-radius: 10px; overflow: hidden; cursor: pointer; 
+            height: 70px; border-radius: 10px; overflow: hidden; cursor: pointer;
             border: 2px solid transparent; opacity: 0.8; transition: 0.2s;
         }
         .thumb-box:hover { border-color: var(--primary); opacity: 1; transform: translateY(-2px); }
@@ -78,8 +78,8 @@ while($img = $gallery_res->fetch_assoc()){
             width: 100%; height: 100%; background: rgba(0,0,0,0.95);
             justify-content: center; align-items: center; flex-direction: column;
         }
-        .lightbox img { 
-            max-width: 90%; max-height: 85vh; border-radius: 4px; 
+        .lightbox img {
+            max-width: 90%; max-height: 85vh; border-radius: 4px;
             box-shadow: 0 0 30px rgba(0,0,0,0.5); user-select: none;
         }
         .lb-controls {
@@ -93,9 +93,9 @@ while($img = $gallery_res->fetch_assoc()){
             backdrop-filter: blur(5px);
         }
         .lb-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
-        .close-btn { 
-            position: absolute; top: 20px; right: 30px; color: white; font-size: 30px; cursor: pointer; 
-            background: rgba(0,0,0,0.5); width: 40px; height: 40px; display: flex; 
+        .close-btn {
+            position: absolute; top: 20px; right: 30px; color: white; font-size: 30px; cursor: pointer;
+            background: rgba(0,0,0,0.5); width: 40px; height: 40px; display: flex;
             align-items: center; justify-content: center; border-radius: 50%;
         }
 
@@ -114,14 +114,14 @@ while($img = $gallery_res->fetch_assoc()){
             display: flex; flex-direction: column;
             overflow: hidden;
         }
-        
+
         .form-header {
             padding: 25px 30px 15px; background: white; z-index: 2;
             border-bottom: 1px solid #F7FAFC;
         }
-        
+
         .form-body {
-            padding: 0 30px 30px; 
+            padding: 0 30px 30px;
             overflow-y: auto;
             scrollbar-width: thin; scrollbar-color: #CBD5E0 #F7FAFC;
         }
@@ -132,7 +132,7 @@ while($img = $gallery_res->fetch_assoc()){
         .form-group label { display: block; font-size: 13px; font-weight: 700; color: #4A5568; margin-bottom: 8px; }
         .form-control { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F7FAFC; font-size: 14px; }
         .btn-submit { width: 100%; background: var(--primary-gradient); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        
+
         #map-display { height: 300px; width: 100%; border-radius: 16px; margin-top: 15px; z-index: 1; }
 
         .nav-brand {
@@ -144,8 +144,8 @@ while($img = $gallery_res->fetch_assoc()){
             letter-spacing: -0.5px;
         }
 
-        @media (max-width: 900px) { 
-            .details-grid { grid-template-columns: 1fr; } 
+        @media (max-width: 900px) {
+            .details-grid { grid-template-columns: 1fr; }
             .main-img-box { height: 300px; }
             .form-card { position: relative; top: 0; max-height: none; overflow: visible; }
         }
@@ -155,15 +155,22 @@ while($img = $gallery_res->fetch_assoc()){
 
     <div id="lightbox" class="lightbox">
         <div class="close-btn" onclick="closeLightbox()">&times;</div>
-        
+
         <div class="lb-controls">
             <button class="lb-btn" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
             <button class="lb-btn" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
 
-        <img id="lightbox-img" src="">
-        <div style="color: white; margin-top: 15px; font-weight: 600; font-size: 14px;">
-            <span id="lb-counter">1</span> / <?= count($js_images) ?>
+        <div style="overflow: hidden; display: flex; justify-content: center; align-items: center; width: 100%; height: 85vh;">
+            <img id="lightbox-img" src="" style="transition: transform 0.2s ease;">
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 15px; align-items: center;">
+            <button class="lb-btn" onclick="zoomImage(-0.2)" style="width: 40px; height: 40px; font-size: 18px;" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <div style="color: white; font-weight: 600; font-size: 14px;">
+                <span id="lb-counter">1</span> / <?= count($js_images) ?>
+            </div>
+            <button class="lb-btn" onclick="zoomImage(0.2)" style="width: 40px; height: 40px; font-size: 18px;" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
         </div>
     </div>
 
@@ -176,7 +183,13 @@ while($img = $gallery_res->fetch_assoc()){
         </div>
         <div class="nav-links desktop-only">
             <a href="index.php">Properties</a>
-            <?php if(isset($_SESSION['user_id']) && $_SESSION['role']=='ADMIN'): ?><a href="admin.php">Admin Panel</a><?php endif; ?>
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <?php if(in_array($_SESSION['role'], ['SUPER ADMIN', 'ADMIN', 'MANAGER'])): ?>
+                    <a href="admin.php">Admin Panel</a>
+                <?php else: ?>
+                    <a href="my_reservations.php">My Reservations</a>
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
         <div class="user-menu">
             <span class="user-name"><?= htmlspecialchars($_SESSION['fullname']) ?></span>
@@ -194,7 +207,7 @@ while($img = $gallery_res->fetch_assoc()){
         </div>
 
         <div class="details-grid">
-            
+
             <div class="left-col">
                 <div class="main-img-box" onclick="openLightbox('<?= $main_img ?>')">
                     <img src="<?= $main_img ?>" class="main-img">
@@ -251,12 +264,12 @@ while($img = $gallery_res->fetch_assoc()){
                             <form action="actions.php" method="POST" enctype="multipart/form-data">
                                 <input type="hidden" name="action" value="reserve">
                                 <input type="hidden" name="lot_id" value="<?= $lot['id'] ?>">
-                                
+
                                 <div class="form-group">
                                     <label>Full Name</label>
-                                    <input type="text" class="form-control" value="<?= $_SESSION['fullname'] ?>" readonly style="background:#EDF2F7;">
+                                    <input type="text" name="fullname" class="form-control" value="<?= $_SESSION['fullname'] ?>" required>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label>Email Address <span style="color:red">*</span></label>
                                     <input type="email" name="email" class="form-control" required placeholder="juandelacruz@gmail.com">
@@ -277,9 +290,9 @@ while($img = $gallery_res->fetch_assoc()){
                                     <label>Home Address <span style="color:red">*</span></label>
                                     <input type="text" name="address" class="form-control" required>
                                 </div>
-                                
+
                                 <div style="border-top: 1px dashed #CBD5E0; margin: 20px 0;"></div>
-                                
+
                                 <div class="form-group">
                                     <label>Valid ID</label>
                                     <input type="file" name="valid_id" class="form-control" required>
@@ -331,11 +344,25 @@ while($img = $gallery_res->fetch_assoc()){
         // --- LIGHTBOX LOGIC ---
         const allImages = <?php echo json_encode($js_images); ?>;
         let currentIdx = 0;
+        let currentZoom = 1;
+
+        function zoomImage(step) {
+            currentZoom += step;
+            if (currentZoom < 0.5) currentZoom = 0.5; // Min zoom limit
+            if (currentZoom > 5) currentZoom = 5;     // Max zoom limit
+            document.getElementById('lightbox-img').style.transform = `scale(${currentZoom})`;
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            document.getElementById('lightbox-img').style.transform = `scale(${currentZoom})`;
+        }
 
         function openLightbox(src) {
             const index = allImages.indexOf(src);
             if(index !== -1) {
                 currentIdx = index;
+                resetZoom();
                 updateLightboxImage();
                 document.getElementById('lightbox').style.display = 'flex';
             }
@@ -343,12 +370,14 @@ while($img = $gallery_res->fetch_assoc()){
 
         function closeLightbox() {
             document.getElementById('lightbox').style.display = 'none';
+            resetZoom();
         }
 
         function changeSlide(step) {
             currentIdx += step;
             if (currentIdx >= allImages.length) currentIdx = 0;
             if (currentIdx < 0) currentIdx = allImages.length - 1;
+            resetZoom();
             updateLightboxImage();
         }
 
